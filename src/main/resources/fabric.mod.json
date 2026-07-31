@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "fifteenannoyances",
+	"version": "${version}",
+	"name": "15 Annoyances",
+	"description": "Every world gets a random annoyance. Good luck.",
+	"authors": [
+		"AntacidDT"
+	],
+	"contact": {
+		"homepage": "https://github.com/AntacidDT/15AM",
+		"sources": "https://github.com/AntacidDT/15AM"
+	},
+	"license": "MIT",
+	"icon": "assets/fifteenannoyances/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.annoyances.forJava.FifteenAnnoyances"
+		],
+		"client": [
+			"com.annoyances.forJava.client.FifteenAnnoyancesClient"
+		]
+	},
+	"mixins": [
+		"fifteenannoyances.mixins.json",
+		{
+			"config": "fifteenannoyances.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.16.9",
+		"minecraft": "~1.21.4",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}

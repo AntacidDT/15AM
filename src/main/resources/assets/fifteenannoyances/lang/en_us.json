@@ -1,0 +1,16 @@
+{
+	"commands.annoyance.active": "Active annoyance: %s",
+	"commands.annoyance.unknown": "You don't know what this annoyance is... 🤫",
+	"commands.annoyance.mode": "Mode set to: %s",
+	"commands.annoyance.current_mode": "Current mode: %s",
+	"commands.annoyance.mode.shared": "Shared",
+	"commands.annoyance.mode.random": "Random",
+	"commands.annoyance.no_world": "Must be in a world to use this command",
+	"commands.annoyance.no_permission": "You don't have permission to change the mode",
+	"annoyance.title": "⚡ Annoyance Active ⚡",
+	"annoyance.wind_surge": "💨 Wind Surge!",
+	"annoyance.color_warning": "Beware... %s",
+	"annoyance.tick_speed": "Tick speed: %d",
+	"annoyance.dehydrated": "You're getting thirsty...",
+	"annoyance.caffeine": "Caffeine: %d"
+}

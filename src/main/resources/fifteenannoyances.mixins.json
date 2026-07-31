@@ -1,0 +1,16 @@
+{
+	"required": true,
+	"package": "com.annoyances.forJava.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"mixins": [
+		"ServerLevelMixin",
+		"PlayerEntityMixin",
+		"PlayerMixin",
+		"LivingEntityMixin",
+		"ItemEntityMixin",
+		"MobMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

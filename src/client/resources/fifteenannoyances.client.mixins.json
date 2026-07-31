@@ -1,0 +1,23 @@
+{
+	"required": true,
+	"package": "com.annoyances.forJava.client.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"client": [
+		"PlayerRendererMixin",
+		"LivingEntityRendererMixin",
+		"FogRendererMixin",
+		"KeyboardHandlerMixin",
+		"AbstractSoundInstanceMixin",
+		"SoundEngineMixin",
+		"InGameHudMixin",
+		"BlockRenderDispatcherMixin",
+		"EntityRendererMixin",
+		"GameRendererAccessor",
+		"SkyRendererMixin",
+		"ClientLevelMixin",
+		"CameraMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
