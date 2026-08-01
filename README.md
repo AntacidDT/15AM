@@ -36,16 +36,16 @@ When a world loads for the first time, one annoyance is randomly picked and reve
 | `/annoyance` | anyone | Show the active annoyance. |
 | `/annoyance mode shared` | op | Switch to shared mode (one annoyance for all). |
 | `/annoyance mode random` | op | Switch to random mode (per-player annoyances). |
-| `/annoyance set <name>` | op | Force a specific annoyance (e.g. `/annoyance set blocktemper`). |
+| `/annoyance set <name>` | op | Force a specific annoyance (op jar only). |
 
 ## Installation
 
 1. Install [Fabric Loader](https://fabricmc.net/use/) 0.16.x for Minecraft 1.21.4.
 2. Download [Fabric API](https://modrinth.com/mod/fabric-api) 0.119.x and place it in your `mods/` folder.
-3. Drop `fifteenannoyances-1.0.0.jar` into `mods/`.
+3. Drop one of the jars from `compiledmod/` into `mods/`:
+   - `fifteenannoyances-1.0.0.jar` — standard version (no `/annoyance set` command)
+   - `fifteenannoyances_op-1.0.0.jar` — op version (includes `/annoyance set` command)
 4. Launch the game.
-
-A pre-compiled jar is included in the `compiledmod/` folder.
 
 ## Custom Sounds
 

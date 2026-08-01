@@ -1,12 +1,9 @@
 package com.annoyances.forJava;
 
-import com.mojang.brigadier.arguments.StringArgumentType;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.minecraft.ChatFormatting;
 import net.minecraft.commands.Commands;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -16,9 +13,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Arrays;
-import java.util.Locale;
 
 public class FifteenAnnoyances implements ModInitializer {
     public static final String MOD_ID = "fifteenannoyances";
@@ -76,49 +70,6 @@ public class FifteenAnnoyances implements ModInitializer {
                                         Component.literal("Current mode: " + mode), false);
                                 return 1;
                             }))
-                    .then(Commands.literal("set")
-                            .then(Commands.argument("name", StringArgumentType.word())
-                                    .suggests((ctx, builder) -> {
-                                        for (Annoyance a : Annoyance.values()) {
-                                            if (a != Annoyance.UNKNOWN) {
-                                                builder.suggest(a.name().toLowerCase(Locale.ROOT).replace("_", ""));
-                                            }
-                                        }
-                                        return builder.buildFuture();
-                                    })
-                                    .executes(ctx -> {
-                                        String name = StringArgumentType.getString(ctx, "name").toUpperCase(Locale.ROOT).replace("_", "");
-                                        Annoyance found = null;
-                                        for (Annoyance a : Annoyance.values()) {
-                                            if (a.name().replace("_", "").equals(name)) {
-                                                found = a;
-                                                break;
-                                            }
-                                        }
-                                        if (found == null) {
-                                            ctx.getSource().sendFailure(Component.literal(
-                                                    "Unknown annoyance: " + name).withStyle(ChatFormatting.RED));
-                                            return 0;
-                                        }
-                                        if (found == Annoyance.UNKNOWN) {
-                                            ctx.getSource().sendFailure(Component.literal(
-                                                    "Cannot set to UNKNOWN").withStyle(ChatFormatting.RED));
-                                            return 0;
-                                        }
-
-                                        Annoyance chosen = found;
-                                        ServerPlayer player = ctx.getSource().getPlayerOrException();
-                                        AnnoyanceManager.setForced(player.serverLevel(), chosen);
-
-                                        for (ServerPlayer online : player.serverLevel().getServer().getPlayerList().getPlayers()) {
-                                            AnnoyanceReveal.playReveal(player.serverLevel(), online, chosen);
-                                        }
-
-                                        ctx.getSource().sendSuccess(() ->
-                                                Component.literal("Annoyance set to: " + chosen.getDisplayName())
-                                                        .withStyle(ChatFormatting.GREEN), true);
-                                        return 1;
-                                    })))
             );
         });
 
