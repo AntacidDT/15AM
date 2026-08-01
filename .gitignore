@@ -1,5 +1,6 @@
 # Agentic Stack
 .agent/
+AGENTS.md
 
 # Gradle
 .gradle/
