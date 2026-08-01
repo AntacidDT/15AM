@@ -1,6 +1,7 @@
 # Agentic Stack
 .agent/
 AGENTS.md
+opencode.json
 
 # Gradle
 .gradle/
