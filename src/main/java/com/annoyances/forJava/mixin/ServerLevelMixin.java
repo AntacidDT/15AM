@@ -1,6 +1,5 @@
 package com.annoyances.forJava.mixin;
 
-import com.annoyances.forJava.Annoyance;
 import com.annoyances.forJava.AnnoyanceManager;
 import net.minecraft.server.level.ServerLevel;
 import org.spongepowered.asm.mixin.Mixin;

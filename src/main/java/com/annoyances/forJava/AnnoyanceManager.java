@@ -90,6 +90,17 @@ public class AnnoyanceManager {
         }
     }
 
+    public static boolean isActiveForAny(ServerLevel level, Annoyance annoyance) {
+        AnnoyanceSavedData data = AnnoyanceSavedData.get(level);
+        if (data.getMode() == Mode.SHARED) {
+            return data.getSharedAnnoyance() == annoyance;
+        }
+        for (ServerPlayer player : level.getServer().getPlayerList().getPlayers()) {
+            if (data.getPlayerAnnoyance(player.getUUID()) == annoyance) return true;
+        }
+        return false;
+    }
+
     public static void tick(ServerLevel level) {
         AnnoyanceSavedData data = AnnoyanceSavedData.get(level);
         Annoyance active = data.getMode() == Mode.SHARED
@@ -98,38 +109,60 @@ public class AnnoyanceManager {
 
         if (active != null) {
             switch (active) {
-                case HELIUM_AIR -> HeliumAirAnnoyance.tick(level);
+                case OUTROVERT -> OutrovertAnnoyance.tick(level);
                 case WIND_SURGE -> WindSurgeAnnoyance.tick(level);
+                case CHAOS -> ChaosAnnoyance.tick(level);
                 case DRUNK -> DrunkAnnoyance.tick(level);
-                case HONEYMOON -> HoneymoonAnnoyance.tick(level);
+                case BLOCK_TEMPER -> {}
                 case CAFFEINATED -> CaffeinatedAnnoyance.tick(level);
                 case EARTHQUAKE -> EarthquakeAnnoyance.tick(level);
                 case GRAVITY_FLIP -> GravityFlipAnnoyance.tick(level);
                 case TELEPORT_FRENZY -> TeleportFrenzyAnnoyance.tick(level);
                 case FLOOR_IS_LAVA -> FloorIsLavaAnnoyance.tick(level);
                 case MOB_RAIN -> MobRainAnnoyance.tick(level);
+                case IDENTITY_CRISIS -> IdentityCrisisAnnoyance.tick(level);
+                case INTROVERTS -> IntrovertsAnnoyance.tick(level);
                 default -> {}
             }
             return;
         }
 
+        boolean windSurge = false;
+        boolean chaos = false;
         boolean quake = false;
         boolean gravityFlip = false;
         boolean teleport = false;
-        boolean lava = false;
         boolean mobRain = false;
+        boolean identityCrisis = false;
+        boolean introverts = false;
+        boolean outroverts = false;
         for (ServerPlayer player : level.getServer().getPlayerList().getPlayers()) {
             Annoyance p = data.getPlayerAnnoyance(player.getUUID());
-            quake |= p == Annoyance.EARTHQUAKE;
-            gravityFlip |= p == Annoyance.GRAVITY_FLIP;
-            teleport |= p == Annoyance.TELEPORT_FRENZY;
-            lava |= p == Annoyance.FLOOR_IS_LAVA;
-            mobRain |= p == Annoyance.MOB_RAIN;
+            switch (p) {
+                case OUTROVERT -> outroverts = true;
+                case FLOOR_IS_LAVA -> FloorIsLavaAnnoyance.tickPlayer(level, player);
+                case DRUNK -> DrunkAnnoyance.tickPlayer(level, player);
+                case BLOCK_TEMPER -> {}
+                case CAFFEINATED -> CaffeinatedAnnoyance.tickPlayer(level, player);
+                case WIND_SURGE -> windSurge = true;
+                case CHAOS -> chaos = true;
+                case EARTHQUAKE -> quake = true;
+                case GRAVITY_FLIP -> gravityFlip = true;
+                case TELEPORT_FRENZY -> teleport = true;
+                case MOB_RAIN -> mobRain = true;
+                case IDENTITY_CRISIS -> identityCrisis = true;
+                case INTROVERTS -> introverts = true;
+                default -> {}
+            }
         }
+        if (windSurge) WindSurgeAnnoyance.tick(level);
+        if (chaos) ChaosAnnoyance.tick(level);
         if (quake) EarthquakeAnnoyance.tick(level);
         if (gravityFlip) GravityFlipAnnoyance.tick(level);
         if (teleport) TeleportFrenzyAnnoyance.tick(level);
-        if (lava) FloorIsLavaAnnoyance.tick(level);
         if (mobRain) MobRainAnnoyance.tick(level);
+        if (identityCrisis) IdentityCrisisAnnoyance.tick(level);
+        if (introverts) IntrovertsAnnoyance.tick(level);
+        if (outroverts) OutrovertAnnoyance.tick(level);
     }
 }

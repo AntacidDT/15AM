@@ -8,8 +8,12 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.Commands;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +23,14 @@ import java.util.Locale;
 public class FifteenAnnoyances implements ModInitializer {
     public static final String MOD_ID = "fifteenannoyances";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+
+    public static final SoundEvent SCARY_SCREAM = registerSound("scary_scream");
+
+    private static SoundEvent registerSound(String name) {
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(MOD_ID, name);
+        return Registry.register(BuiltInRegistries.SOUND_EVENT, id,
+                SoundEvent.createVariableRangeEvent(id));
+    }
 
     @Override
     public void onInitialize() {
@@ -112,12 +124,6 @@ public class FifteenAnnoyances implements ModInitializer {
 
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             AnnoyanceManager.sendSyncPacket((ServerPlayer) handler.getPlayer());
-        });
-
-        ServerTickEvents.END_WORLD_TICK.register(level -> {
-            if (level.dimension().equals(level.getServer().overworld().dimension())) {
-                AnnoyanceManager.tick(level);
-            }
         });
 
         ServerLifecycleEvents.SERVER_STARTED.register(server -> {

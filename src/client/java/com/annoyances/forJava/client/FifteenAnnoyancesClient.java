@@ -9,9 +9,9 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.LevelTargetBundle;
+import net.minecraft.client.renderer.PostChain;
 import net.minecraft.resources.ResourceLocation;
-
-import java.util.Random;
 
 public class FifteenAnnoyancesClient implements ClientModInitializer {
     private static com.annoyances.forJava.Annoyance activeAnnoyance = com.annoyances.forJava.Annoyance.UNKNOWN;
@@ -19,10 +19,25 @@ public class FifteenAnnoyancesClient implements ClientModInitializer {
     private static boolean drunkVisualsActive = false;
     private static int previousRenderDistance = 0;
 
-    private static final String[] GLITCH_SHADERS = {"invert", "bits", "spider", "box_blur", "color_convolve"};
-    private static int glitchTicksLeft = 0;
-    private static int glitchCooldown = 100;
-    private static final Random RANDOM = new Random();
+    private static boolean visionVisualsActive = false;
+
+    private enum VisionMode {
+        GLITCH("vision_glitch", true),
+        INVERT("vision_invert", true),
+        MIRROR("vision_mirror", false),
+        UPSIDE("vision_upside", false),
+        BEHIND("vision_behind", false);
+
+        final String chainName;
+        final boolean needsTime;
+
+        VisionMode(String chainName, boolean needsTime) {
+            this.chainName = chainName;
+            this.needsTime = needsTime;
+        }
+    }
+
+    private static VisionMode currentVisionMode = null;
 
     @Override
     public void onInitializeClient() {
@@ -37,6 +52,8 @@ public class FifteenAnnoyancesClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             Annoyance annoyance = getActiveAnnoyance();
 
+            ClientVisuals.tickAmbient(client);
+
             boolean drunk = annoyance == Annoyance.DRUNK;
             if (drunk != drunkVisualsActive) {
                 drunkVisualsActive = drunk;
@@ -50,32 +67,40 @@ public class FifteenAnnoyancesClient implements ClientModInitializer {
                 }
             }
 
-            if (annoyance == Annoyance.SOUNDSQM) {
-                if (glitchTicksLeft > 0) {
-                    glitchTicksLeft--;
-                    if (glitchTicksLeft == 0) {
-                        client.gameRenderer.clearPostEffect();
-                    }
+            boolean vision = annoyance == Annoyance.VISION_GLITCH;
+            if (vision != visionVisualsActive) {
+                visionVisualsActive = vision;
+                if (vision) {
+                    currentVisionMode = VisionMode.GLITCH;
+                    applyPostEffect(client, visionChain(currentVisionMode));
                 } else {
-                    glitchCooldown--;
-                    if (glitchCooldown <= 0) {
-                        glitchCooldown = 120 + RANDOM.nextInt(160);
-                        glitchTicksLeft = 30 + RANDOM.nextInt(25);
-                        applyPostEffect(client, GLITCH_SHADERS[RANDOM.nextInt(GLITCH_SHADERS.length)]);
+                    currentVisionMode = null;
+                    client.gameRenderer.clearPostEffect();
+                }
+            }
+
+            if (vision && client.level != null) {
+                long ticks = client.level.getGameTime();
+                VisionMode[] modes = VisionMode.values();
+                VisionMode mode = modes[(int) ((ticks / 120) % modes.length)];
+                if (mode != currentVisionMode) {
+                    currentVisionMode = mode;
+                    applyPostEffect(client, visionChain(mode));
+                }
+                if (mode.needsTime) {
+                    PostChain chain = client.getShaderManager().getPostChain(visionChain(mode), LevelTargetBundle.MAIN_TARGETS);
+                    if (chain != null) {
+                        chain.setUniform("Time", (float) ticks);
                     }
                 }
-            } else if (glitchTicksLeft > 0) {
-                glitchTicksLeft = 0;
-                glitchCooldown = 100;
-                client.gameRenderer.clearPostEffect();
             }
         });
 
         FifteenAnnoyances.LOGGER.info("15 Annoyances client loaded!");
     }
 
-    private static void applyPostEffect(Minecraft client, String name) {
-        applyPostEffect(client, ResourceLocation.withDefaultNamespace(name));
+    private static ResourceLocation visionChain(VisionMode mode) {
+        return ResourceLocation.fromNamespaceAndPath("fifteenannoyances", mode.chainName);
     }
 
     private static void applyPostEffect(Minecraft client, ResourceLocation id) {
@@ -87,13 +112,5 @@ public class FifteenAnnoyancesClient implements ClientModInitializer {
 
     public static com.annoyances.forJava.Annoyance getActiveAnnoyance() {
         return activeAnnoyance;
-    }
-
-    public static boolean isHoneymoonNight() {
-        if (activeAnnoyance != com.annoyances.forJava.Annoyance.HONEYMOON) return false;
-        Minecraft client = Minecraft.getInstance();
-        if (client.level == null) return false;
-        long time = client.level.getDayTime() % 24000;
-        return time >= 13000 && time < 23000;
     }
 }

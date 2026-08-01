@@ -14,22 +14,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(ServerPlayer.class)
 public abstract class PlayerEntityMixin {
 
-    @Inject(method = "tick", at = @At("HEAD"))
-    private void onTick(CallbackInfo ci) {
-        ServerPlayer player = (ServerPlayer) (Object) this;
-        if (player.serverLevel() == null) return;
-
-        Annoyance annoyance = AnnoyanceManager.getForPlayer(player.serverLevel(), player);
-
-        switch (annoyance) {
-            case HELIUM_AIR -> HeliumAirAnnoyance.tickPlayer(player.serverLevel(), player);
-            case DRUNK -> DrunkAnnoyance.tickPlayer(player.serverLevel(), player);
-            case HONEYMOON -> HoneymoonAnnoyance.tickPlayer(player.serverLevel(), player);
-            case CAFFEINATED -> CaffeinatedAnnoyance.tickPlayer(player.serverLevel(), player);
-            default -> {}
-        }
-    }
-
     @Inject(method = "startSleepInBed", at = @At("HEAD"), cancellable = true)
     private void onStartSleepInBed(BlockPos pos, CallbackInfoReturnable<Either<Player.BedSleepingProblem, ?>> cir) {
         ServerPlayer player = (ServerPlayer) (Object) this;
@@ -42,5 +26,15 @@ public abstract class PlayerEntityMixin {
                     true);
             cir.setReturnValue(Either.left(Player.BedSleepingProblem.OTHER_PROBLEM));
         }
+    }
+
+    @Inject(method = "attack(Lnet/minecraft/world/entity/Entity;)V", at = @At("HEAD"))
+    private void onAttack(net.minecraft.world.entity.Entity target, CallbackInfo ci) {
+        ServerPlayer player = (ServerPlayer) (Object) this;
+        if (player.serverLevel() == null) return;
+
+        IdentityCrisisAnnoyance.onAttack(player.serverLevel(), player, target);
+        GravityFlipAnnoyance.tryTrigger(player.serverLevel(), player);
+        TeleportFrenzyAnnoyance.onAttack(player.serverLevel(), player, target);
     }
 }

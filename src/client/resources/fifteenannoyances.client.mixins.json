@@ -4,17 +4,11 @@
 	"compatibilityLevel": "JAVA_21",
 	"client": [
 		"PlayerRendererMixin",
-		"LivingEntityRendererMixin",
-		"FogRendererMixin",
 		"KeyboardHandlerMixin",
-		"AbstractSoundInstanceMixin",
-		"SoundEngineMixin",
 		"InGameHudMixin",
-		"BlockRenderDispatcherMixin",
 		"EntityRendererMixin",
+		"EntityRenderDispatcherMixin",
 		"GameRendererAccessor",
-		"SkyRendererMixin",
-		"ClientLevelMixin",
 		"CameraMixin"
 	],
 	"injectors": {

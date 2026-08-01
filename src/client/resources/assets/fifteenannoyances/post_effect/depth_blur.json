@@ -1,7 +1,8 @@
 {
     "targets": {
         "swap": {},
-        "swap2": {}
+        "swap2": {},
+        "swap3": {}
     },
     "passes": [
         {
@@ -63,6 +64,17 @@
                     "sampler_name": "Depth",
                     "target": "minecraft:main",
                     "use_depth_buffer": true
+                }
+            ],
+            "output": "swap3"
+        },
+        {
+            "program": "minecraft:post/blit",
+            "inputs": [
+                {
+                    "sampler_name": "In",
+                    "target": "swap3",
+                    "bilinear": true
                 }
             ],
             "output": "minecraft:main"

@@ -1,0 +1,29 @@
+{
+    "targets": {
+        "swap": {}
+    },
+    "passes": [
+        {
+            "program": "fifteenannoyances:post/vision_behind",
+            "inputs": [
+                {
+                    "sampler_name": "In",
+                    "target": "minecraft:main",
+                    "bilinear": true
+                }
+            ],
+            "output": "swap"
+        },
+        {
+            "program": "minecraft:post/blit",
+            "inputs": [
+                {
+                    "sampler_name": "In",
+                    "target": "swap",
+                    "bilinear": true
+                }
+            ],
+            "output": "minecraft:main"
+        }
+    ]
+}

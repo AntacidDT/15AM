@@ -12,5 +12,6 @@
 	"annoyance.color_warning": "Beware... %s",
 	"annoyance.tick_speed": "Tick speed: %d",
 	"annoyance.dehydrated": "You're getting thirsty...",
-	"annoyance.caffeine": "Caffeine: %d"
+	"annoyance.caffeine": "Caffeine: %d",
+	"subtitle.fifteenannoyances.scary_scream": "A distant scream"
 }

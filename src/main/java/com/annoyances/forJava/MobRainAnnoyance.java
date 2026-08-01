@@ -1,14 +1,14 @@
 package com.annoyances.forJava;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Monster;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public class MobRainAnnoyance {
     );
 
     private static int tickCounter = 0;
-    private static int nextRainTick = 600 + RANDOM.nextInt(400);
+    private static int nextRainTick = 100 + RANDOM.nextInt(120);
 
     public static void tickShared(ServerLevel level) {
         tickCounter++;
@@ -35,18 +35,28 @@ public class MobRainAnnoyance {
         if (tickCounter < nextRainTick) return;
 
         tickCounter = 0;
-        nextRainTick = 500 + RANDOM.nextInt(600);
+        nextRainTick = 100 + RANDOM.nextInt(120);
 
         for (ServerPlayer player : level.getServer().getPlayerList().getPlayers()) {
             if (player.isSpectator()) continue;
 
-            int count = 3 + RANDOM.nextInt(4);
+            int count = 5 + RANDOM.nextInt(4);
             for (int i = 0; i < count; i++) {
-                double x = player.getX() + (RANDOM.nextDouble() * 2 - 1) * 6;
-                double z = player.getZ() + (RANDOM.nextDouble() * 2 - 1) * 6;
-                double y = player.getY() + 20 + RANDOM.nextDouble() * 8;
+                double x = player.getX() + (RANDOM.nextDouble() * 2 - 1) * 25;
+                double z = player.getZ() + (RANDOM.nextDouble() * 2 - 1) * 25;
+                double y = player.getY() + 28 + RANDOM.nextDouble() * 8;
 
-                Mob mob = MOBS.get(RANDOM.nextInt(MOBS.size())).create(level, net.minecraft.world.entity.EntitySpawnReason.EVENT);
+                if (i == 0 && RANDOM.nextDouble() < 0.15) {
+                    Creeper creeper = EntityType.CREEPER.create(level, EntitySpawnReason.EVENT);
+                    if (creeper != null) {
+                        creeper.setPos(x, y, z);
+                        creeper.ignite();
+                        level.addFreshEntity(creeper);
+                    }
+                    continue;
+                }
+
+                Mob mob = MOBS.get(RANDOM.nextInt(MOBS.size())).create(level, EntitySpawnReason.EVENT);
                 if (mob == null) continue;
                 mob.setPos(x, y, z);
                 level.addFreshEntity(mob);
@@ -56,8 +66,6 @@ public class MobRainAnnoyance {
             level.playSound(null, player.blockPosition(),
                     SoundEvents.CAT_HISS, SoundSource.HOSTILE,
                     0.6f, 1.2f);
-            player.sendSystemMessage(Component.literal("It's raining mobs!")
-                    .withStyle(ChatFormatting.DARK_RED));
         }
     }
 

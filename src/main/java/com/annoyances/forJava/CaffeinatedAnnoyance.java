@@ -10,10 +10,14 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CaffeinatedAnnoyance {
     private static final Random RANDOM = new Random();
+    private static final Map<UUID, Integer> BURST_TICKS = new ConcurrentHashMap<>();
 
     public static void tick(ServerLevel level) {
         for (ServerPlayer player : level.getServer().getPlayerList().getPlayers()) {
@@ -29,6 +33,26 @@ public class CaffeinatedAnnoyance {
         player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, 40, 2, false, false, true));
         player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 40, 1, false, false, true));
         player.addEffect(new MobEffectInstance(MobEffects.JUMP, 40, 1, false, false, true));
+
+        Integer burst = BURST_TICKS.get(player.getUUID());
+        if (burst != null) {
+            burst--;
+            if (burst <= 0) {
+                BURST_TICKS.remove(player.getUUID());
+            } else {
+                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 40, 5, false, false, true));
+                player.addEffect(new MobEffectInstance(MobEffects.JUMP, 40, 4, false, false, true));
+                player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 40, 0, false, false, true));
+                level.sendParticles(new DustParticleOptions(0x88FF22, 0.8f),
+                        player.getX(), player.getY() + 0.8, player.getZ(),
+                        2, 0.2, 0.2, 0.2, 0);
+                BURST_TICKS.put(player.getUUID(), burst);
+            }
+        } else if (RANDOM.nextDouble() < 0.004) {
+            BURST_TICKS.put(player.getUUID(), 100);
+            level.playSound(null, player.blockPosition(), SoundEvents.PLAYER_BREATH,
+                    SoundSource.PLAYERS, 0.8f, 2.0f);
+        }
 
         if (player.onGround() && RANDOM.nextDouble() < 0.06) {
             player.jumpFromGround();

@@ -1,8 +1,6 @@
 package com.annoyances.forJava;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -54,8 +52,6 @@ public class EarthquakeAnnoyance {
             for (ServerPlayer player : level.getServer().getPlayerList().getPlayers()) {
                 player.setDeltaMovement(player.getDeltaMovement().add(0, 1.2, 0));
                 player.hurtMarked = true;
-                player.sendSystemMessage(Component.literal("EARTHQUAKE!")
-                        .withStyle(ChatFormatting.RED));
             }
         }
     }

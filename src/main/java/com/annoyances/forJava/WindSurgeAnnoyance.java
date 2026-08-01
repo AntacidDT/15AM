@@ -1,8 +1,6 @@
 package com.annoyances.forJava;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -20,6 +18,7 @@ public class WindSurgeAnnoyance {
     private static double gustSpin = 0;
     private static double gustForce = 0;
     private static double gustDy = 0;
+    private static boolean spinning = false;
 
     public static void tickShared(ServerLevel level) {
         tickCounter++;
@@ -37,6 +36,9 @@ public class WindSurgeAnnoyance {
                         player.getDeltaMovement().add(dx, gustDy * forceMultiplier, dz)
                 );
                 player.hurtMarked = true;
+                if (spinning) {
+                    player.setYRot(player.getYRot() + 12.0f);
+                }
                 level.sendParticles(ParticleTypes.CLOUD,
                         player.getX(), player.getY() + 1, player.getZ(),
                         3, dx * 0.6, 0.1, dz * 0.6, 0.05);
@@ -54,14 +56,10 @@ public class WindSurgeAnnoyance {
             gustAngle = RANDOM.nextDouble() * Math.PI * 2;
             gustSpin = (RANDOM.nextDouble() - 0.5) * 0.1;
             gustDy = RANDOM.nextDouble() < 0.6 ? 0.15 + RANDOM.nextDouble() * 0.35 : 0;
+            spinning = RANDOM.nextDouble() < 0.15;
 
             tickCounter = 0;
             nextGustTick = 60 + RANDOM.nextInt(100);
-
-            for (ServerPlayer player : level.getServer().getPlayerList().getPlayers()) {
-                player.sendSystemMessage(Component.literal("Wind Surge!")
-                        .withStyle(ChatFormatting.AQUA));
-            }
         }
     }
 

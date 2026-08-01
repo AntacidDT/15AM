@@ -1,0 +1,11 @@
+{
+    "scary_scream": {
+        "subtitle": "subtitle.fifteenannoyances.scary_scream",
+        "sounds": [
+            {
+                "name": "fifteenannoyances:scary_scream",
+                "volume": 1.0
+            }
+        ]
+    }
+}
