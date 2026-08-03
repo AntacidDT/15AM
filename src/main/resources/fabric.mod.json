@@ -3,7 +3,7 @@
 	"id": "fifteenannoyances",
 	"version": "${version}",
 	"name": "15 Annoyances",
-	"description": "Every world gets a random annoyance. Good luck.",
+	"description": "15 Annoyances that will annoy you.",
 	"authors": [
 		"AntacidDT"
 	],
@@ -11,7 +11,7 @@
 		"homepage": "https://github.com/AntacidDT/15AM",
 		"sources": "https://github.com/AntacidDT/15AM"
 	},
-	"license": "MIT",
+	"license": "Apache-2.0",
 	"icon": "assets/fifteenannoyances/icon.png",
 	"environment": "*",
 	"entrypoints": {
