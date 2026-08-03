@@ -1,6 +1,6 @@
 # 15AM by AntacidDT
 
-![15AM Logo](logo.jpg)
+<img src="logo.jpg" width="200" alt="15AM Logo">
 
 15 Annoyances that will annoy you.
 
