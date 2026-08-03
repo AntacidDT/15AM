@@ -1,4 +1,8 @@
-# 15 Annoyances
+# 15AM by AntacidDT
+
+![15AM Logo](logo.jpg)
+
+15 Annoyances that will annoy you.
 
 A Fabric mod for Minecraft **1.21.4** that forces **one of 15 randomized annoyances** onto your world — or onto every player individually. Nothing is under your control.
 
@@ -72,4 +76,4 @@ The jar lands in `build/libs/`. For development:
 
 ## License
 
-This project is licensed under the [Apache License, Version 2.0](LICENSE).
+Apache 2.0
